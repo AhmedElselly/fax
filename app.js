@@ -58,11 +58,8 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
 	post.file.data = req.file.buffer;
 	post.file.contenType = req.file.mimetype;
 	post.file.name = req.file.originalname;
-	// let dataBuffer = fs.readFileSync(post.file.name);
 	post.pages = 0;
-	// console.log('DATA BUFFER', dataBuffer);
 	await pdfparse(post.file.data).then(data => {
-		// console.log(data.numpages);
 		post.pages += data.numpages;
 	});
 
@@ -89,8 +86,8 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
   		
 
 	 
-	  const toPerson = req.body.post.to;
-	  console.log(`To Person, ${toPerson}`);
+ 	const toPerson = req.body.post.to;
+  	console.log(`To Person, ${toPerson}`);
 	phaxio.faxes.create({
 	  from: req.body.post.from,
 	  to: toPerson, // Replace this with a number that can receive faxes.
@@ -99,46 +96,46 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
 	  // header_page_nums: true,
 	  file: post.file.name,
 	})
-	  .then((faxObject) => {
-	    // The `create` method returns a fax object with methods attached to it for doing things
-	    // like cancelling, resending, getting info, etc.
-	    console.log(faxObject);
-	    return faxObject.getInfo();
-	    // Wait 5 seconds to let the fax send, then get the status of the fax by getting its info from the API.
-	    // return setTimeout(() => {
-	    //   fax.getInfo()
-	    // }, 5000)
+  .then((faxObject) => {
+    // The `create` method returns a fax object with methods attached to it for doing things
+    // like cancelling, resending, getting info, etc.
+    console.log(faxObject);
+    return faxObject.getInfo();
+    // Wait 5 seconds to let the fax send, then get the status of the fax by getting its info from the API.
+    // return setTimeout(() => {
+    //   fax.getInfo()
+    // }, 5000)
 
-	  })
-	  .then(faxObject => console.log('Fax status response:\n', JSON.stringify(faxObject, null, 2)))
-	  .catch((err) => { throw err; });
+  })
+  .then(faxObject => console.log('Fax status response:\n', JSON.stringify(faxObject, null, 2)))
+  .catch((err) => { throw err; });
 
-	  setTimeout(function(){
-	  	fs.unlink(post.file.name, function(err){
-	  		console.log('File has been deleted successfully');
-	  	})
-	  }, 10000);
+  setTimeout(function(){
+  	fs.unlink(post.file.name, function(err){
+  		console.log('File has been deleted successfully');
+  	})
+  }, 10000);
 
-		var transporter = nodemailer.createTransport({
-		  host: 'smtp.gmail.com',
-		  port: 587,
-		  secure: false,
-		  // requireTls: true,
-		  auth: {
-		    user: 'ahmedelselly87@gmail.com',
-		    pass: process.env.NODEMAILER_PASSWORD
-		  },
-		  tls: {
-		  	rejectUnauthorized: false
-		  }
-		});
+	var transporter = nodemailer.createTransport({
+	  host: 'smtp.gmail.com',
+	  port: 587,
+	  secure: false,
+	  // requireTls: true,
+	  auth: {
+	    user: 'ahmedelselly87@gmail.com',
+	    pass: process.env.NODEMAILER_PASSWORD
+	  },
+	  tls: {
+	  	rejectUnauthorized: false
+	  }
+	});
 
-		var mailOptions = {
-		  from: 'ahmedelselly87@gmail.com',
-		  to: req.body.post.email,
-		  subject: 'Fax',
-		  text: `Fax has been sent successfully! the amount you have paid is ${amount}.00$`
-		};
+	var mailOptions = {
+	  from: 'ahmedelselly87@gmail.com',
+	  to: req.body.post.email,
+	  subject: 'Fax',
+	  text: `Fax has been sent successfully! the amount you have paid is ${amount}.00$`
+	};
 
 	transporter.sendMail(mailOptions, function(error, info){
 	  if (error) {
