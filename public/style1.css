@@ -1,3 +1,11 @@
+.header{
+  position: absolute;
+  top: 25px;
+  left: 50px;
+  z-index: 1000;
+  color: #fff;
+}
+
 
 /* Style the form */
 #regForm {

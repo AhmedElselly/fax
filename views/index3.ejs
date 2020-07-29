@@ -15,26 +15,26 @@
   <div class="carousel-inner" style="width: 100%; height: 100vh;">
     <div class="carousel-item active">
       <img src="images/fax2.jpg" class="d-block w-100" alt="...">
-      <div class="carousel-caption d-none d-md-block" style="top: 60vh; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+      <div class="carousel-caption d-none d-md-block" style="top: 50vh; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
 ">
-        <h5 style="font-size: 3.8rem">Secure</h5>
-        <p style="font-size: 2.8rem">Reach to your partner securely</p>
+        <h5 style="font-size: 3.8rem">Easy</h5>
+        <p style="font-size: 2.8rem">Fax. Pay. Confirm. No commitment. No subscription.</p>
       </div>
     </div>
     <div class="carousel-item">
       <img src="images/fax3.jpg" class="d-block w-100" alt="...">
-      <div class="carousel-caption d-none d-md-block" style="top: 60vh; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+      <div class="carousel-caption d-none d-md-block" style="top: 50vh; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
 ">
         <h5 style="font-size: 3.8rem">Cheap</h5>
-        <p style="font-size: 2.8rem">Doesn't cost you money.</p>
+        <p style="font-size: 2.8rem">Only 1$ per page.</p>
       </div>
     </div>
     <div class="carousel-item">
       <img src="images/fax1.jpg" class="d-block w-100" alt="...">
-      <div class="carousel-caption d-none d-md-block" style="top: 70vh; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+      <div class="carousel-caption d-none d-md-block" style="top: 50vh; box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
 ">
-        <h5 style="font-size: 3.8rem">Fast</h5>
-        <p style="font-size: 2.8rem">Reach to your partner fast.</p>
+        <h5 style="font-size: 3.8rem">Safe</h5>
+        <p style="font-size: 2.8rem">Reach to your partner fast, Pay only when your fax goes through.</p>
       </div>
     </div>
   </div>
@@ -50,20 +50,20 @@
 
 <br>
 <div class="container">
-<form id="regForm" action="/fax" method="POST" enctype="multipart/form-data">
+<form id="regForm" action="/fax" method="POST" class="form-group" enctype="multipart/form-data">
 
 <h1>The initial data:</h1>
 
 <!-- One "tab" for each step in the form: -->
 <div class="tab">
-  <p> <input type="number" name="post[from]" placeholder="Your Phone Number" oninput="this.className = ''"></p>
+  <p> <input type="number" name="post[from]" class="form-control-lg" placeholder="Your Phone Number" oninput="this.className = ''"></p>
   <!-- <p><input placeholder="Last name..." oninput="this.className = ''"></p> -->
-  <p><input type="number" name="post[to]" placeholder="The Number you want to send to" oninput="this.className = ''"></p>
-  <p><input type="file" name="filePDF" oninput="this.className = ''"></p>
+  <p><input type="number" name="post[to]" class="form-control-lg" placeholder="The Number you want to send to" oninput="this.className = ''"></p>
+  <p><input type="file" class="form-control-file" name="filePDF" oninput="this.className = ''"></p>
 </div>
 
 <div class="tab">Contact Info:
-  <p><input placeholder="E-mail..." name="post[email]" oninput="this.className = ''"></p>
+  <p><input placeholder="E-mail..." class="form-control-lg" name="post[email]" oninput="this.className = ''"></p>
   <!-- <p><input placeholder="Phone..." oninput="this.className = ''"></p> -->
 </div>
 
@@ -233,6 +233,11 @@
     x[n].className += " active";
   }
 
+  // Add the following code if you want the name of the file appear on select
+  $(".custom-file-input").on("change", function() {
+    var fileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+  });
 </script>
 </body>
 </html>
