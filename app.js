@@ -137,7 +137,7 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
 		  from: 'ahmedelselly87@gmail.com',
 		  to: req.body.post.email,
 		  subject: 'Fax',
-		  text: 'Fax has been sent successfully!'
+		  text: `Fax has been sent successfully! the amount you have paid is ${amount}.00$`
 		};
 
 	transporter.sendMail(mailOptions, function(error, info){
@@ -148,7 +148,7 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
 	  }
 	});
 
-	req.session.success = 'File has been sent successfully. A message has been sent to your email.'
+	req.session.success = `File has been sent successfully. The amount you have paid is ${amount}.00$ A message has been sent to your email.`
  	res.redirect('/');
 	  
 })
