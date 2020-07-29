@@ -15,23 +15,10 @@ const multer = require('multer');
 const upload = multer({storage: multer.memoryStorage()});
 const nodemailer = require('nodemailer');
 const Stripe = require('stripe');
+const flash = require('connect-flash');
+const session = require('express-session');
 
 const stripe = Stripe('sk_test_EycwzlF2EyCNqN9vTSGieIag002Nx5vqpx');
-
-
-
-
-// const braintree = require('braintree');
-
-// var gateway = braintree.connect({
-//   environment: braintree.Environment.Sandbox,
-//   merchantId: process.env.BRAINTREE_MERCHANT_ID,
-//   publicKey: process.env.BRAINTREE_PUBLIC_KEY,
-//   privateKey: process.env.BRAINTREE_PRIVATE_KEY
-// });
-
-// const reader = new PdfReader();
-
 
 mongoose.connect('mongodb://ahmed:0512922Ahmed1234@ds117362.mlab.com:17362/fax', {
 	useNewUrlParser: true,
@@ -45,64 +32,25 @@ const phaxio = new Phaxio(process.env.FAX_APIKEY, process.env.FAX_APISECRET);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(session({
+	resave: false,
+	secret: 'Meow',
+	saveUninitialized: true
+}));
+app.use(flash());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'))
 app.use(morgan('dev'));
 
+app.use(function(req, res, next){
+	res.locals.success = req.session.success || '';
+  	delete req.session.success;
+	next();
+})
+
 app.get('/', (req, res) => {
 	res.render('index3');
 });
-
-// app.post('/fax', async (req, res) => {
-
-// 	// const newPdf = new pdfreader.PdfReader().parseFileItems("sample1.pdf", function(err, item) {
-// 	//   if (err) console.log(err);
-// 	//   else if (!item) console.log('Done');
-// 	//   else if (item.text) return item.text;
-// 	// });
-// 	// console.log(newPdf)
-// 	// Send a single fax containing two documents: one a URL, one from the filesystem.
-// 	let form = new formidable.IncomingForm();
-//         form.keepExtensions = true;
-//         form.parse(req, async (err, fields, files) => {
-//             if (err) {
-//                 return err;
-//             }
-//             let post = new Fax(fields);
-
-            
-//             if (files.file) {
-//                 post.file.data = await fs.readFileSync(files.file.path);
-//                 post.file.contenType = await files.file.type;
-//             }
-//             await post.save();
-//             console.log(files)
-//             console.log(post.file)
-//             // console.log(req.body.from) //+18773346654
-// 			// console.log(req.body.to) //+18773346654
-// 			// console.log(post.file.data) 
-
-// 			phaxio.faxes.create({
-// 			  from: req.body.from,
-// 			  to: req.body.to, // Replace this with a number that can receive faxes.
-// 			  // content_url: newPdf,
-// 			  file: post.file.data,
-// 			})
-// 			  .then((fax) => {
-// 			    // The `create` method returns a fax object with methods attached to it for doing things
-// 			    // like cancelling, resending, getting info, etc.
-// 			    console.log(fax);
-// 			    // Wait 5 seconds to let the fax send, then get the status of the fax by getting its info from the API.
-// 			    return setTimeout(() => {
-// 			      fax.getInfo()
-// 			    }, 5000)
-// 			  }).then(status => console.log('Fax status response:\n', JSON.stringify(status, null, 2)))
-// 			  .catch((err) => { throw err; });
-// 			  res.redirect('/')
-//     });
-	
-// })
-
 
 app.post('/fax', upload.single('filePDF'), async (req, res) => {
 	console.log(req.file)
@@ -199,8 +147,9 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
 	    console.log('Email sent: ' + info.response);
 	  }
 	});
-	  
-	  res.redirect('/');
+
+	req.session.success = 'File has been sent successfully. A message has been sent to your email.'
+ 	res.redirect('/');
 	  
 })
 
