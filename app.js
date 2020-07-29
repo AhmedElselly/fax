@@ -49,7 +49,7 @@ app.use(function(req, res, next){
 })
 
 app.get('/', (req, res) => {
-	res.render('index3');
+	res.render('index');
 });
 
 app.post('/fax', upload.single('filePDF'), async (req, res) => {
