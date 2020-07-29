@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>FormWizard_v2</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="author" content="colorlib.com">
+		<!-- LINEARICONS -->
+		<link rel="stylesheet" href="fonts/linearicons/style.css">
+
+		<!-- MATERIAL DESIGN ICONIC FONT -->
+		<link rel="stylesheet" href="fonts/material-design-iconic-font/css/material-design-iconic-font.css">
+
+		<!-- DATE-PICKER -->
+		<link rel="stylesheet" href="vendor/date-picker/css/datepicker.min.css">
+
+		<!-- STYLE CSS -->
+		<link rel="stylesheet" href="css/style.css">
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="inner">
+				<div class="image-holder">
+					<img src="images/form-wizard.jpg" alt="">
+					<h3>Your reservation</h3>
+				</div>
+            	<div id="wizard">
+
+            		<!-- SECTION 1 -->
+	                <h4>Initial information</h4>
+	                <section>
+						<div class="form-row">
+							<div class="form-holder">
+								<input type="number" class="form-control" data-language='en' name='post[from]'  placeholder="Your fax number">
+							</div>
+							<div class="form-holder">
+								<input type="text" class="form-control" data-language='en'  name='post[to]' placeholder="The number you want to send to">
+							</div>
+						</div>
+						<div class="form-row">
+							
+							<!-- <div class="select">
+								<div class="form-holder">
+									<div class="select-control">Room :</div>
+									<span class="lnr lnr-chevron-down"></span>
+								</div>
+								<ul class="dropdown">
+									<li rel="1 Room">1 Room</li>
+									<li rel="2 Room">2 Room</li>
+									<li rel="3 Room">3 Room</li>
+									<li rel="4 Room">4 Room</li>
+									<li rel="5 Room">5 Room</li>
+								</ul>
+							</div> -->
+
+							<input type="file" name="filePDF">
+						</div>
+
+						<button class="forward">Next
+							<i class="zmdi zmdi-long-arrow-right"></i>
+						</button>
+	                </section>
+
+					<!-- SECTION 2 -->
+	                <h4>Choose Room</h4>
+	                <section class="section-style">
+                		<label>Your Email</label>
+                		<input type="email" name="email">
+                		<button class="forward">Next
+							<i class="zmdi zmdi-long-arrow-right"></i>
+						</button>
+	                </section>
+
+
+	                <!-- SECTION 3 -->
+	                <!-- <h4>Make a Reservation</h4>
+	                <section>
+                    	<div class="form-row">
+							<div class="form-holder">
+								<input type="text" class="form-control" placeholder="First Name :">
+							</div>
+							<div class="form-holder">
+								<input type="text" class="form-control" placeholder="Last Name :">
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-holder">
+								<input type="text" class="form-control" placeholder="Phone :">
+							</div>
+							<div class="form-holder">
+								<input type="text" class="form-control" placeholder="Mail :">
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-holder w-100">
+								<input type="text" class="form-control" placeholder="Address :">
+							</div>
+						</div>
+						<div class="form-row mb-21">
+							<div class="form-holder w-100">
+								<textarea name="" id="" class="form-control" style="height: 79px;" placeholder="Special Requirements :"></textarea>
+							</div>
+						</div>
+	                    <div class="checkbox">
+							<label>
+								<input type="checkbox"> I have read and accept the <a href="#">terms and conditions.</a>
+								<span class="checkmark"></span>
+							</label>
+						</div>
+	                    <button class="forward" style="width: 195px; margin-top: 44px;">Book by email
+							<i class="zmdi zmdi-long-arrow-right"></i>
+						</button>
+	                </section> -->
+
+	                <!-- SECTION 4 -->
+	                <h4>Confirmation</h4>
+	                <section class="section-style">
+						<div id="dropin-wrapper">
+						  <div id="checkout-message"></div>
+						  <div id="dropin-container"></div>
+						  <button id="submit-button">Confirm</button>
+						</div>
+	            			<!-- <button id="submit-form" style="width: 195px; margin-top: 45px;">Confirmation
+								<i class="zmdi zmdi-long-arrow-right"></i>
+							</button> -->
+	                </section>
+            	</div>
+			</div>
+		</div>
+
+		<!-- includes the Braintree JS client SDK -->
+		<script src="https://js.braintreegateway.com/web/dropin/1.23.0/js/dropin.min.js"></script>
+		<script src="js/jquery-3.3.1.min.js"></script>
+		<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script> -->
+		<script>
+		  var button = document.querySelector('#submit-button');
+
+		  braintree.dropin.create({
+		    // Insert your tokenization key here
+		    authorization: 'sandbox_9qwwppw4_v2j2xcr46g8zzd3c',
+		    container: '#dropin-container'
+		  }, function (createErr, instance) {
+		    button.addEventListener('click', function () {
+		      instance.requestPaymentMethod(function (requestPaymentMethodErr, payload) {
+		        // When the user clicks on the 'Submit payment' button this code will send the
+		        // encrypted payment information in a variable called a payment method nonce
+		        $.ajax({
+		          type: 'POST',
+		          url: '/fax',
+		          data: {'paymentMethodNonce': payload.nonce}
+		        }).done(function(result) {
+		          // Tear down the Drop-in UI
+		          instance.teardown(function (teardownErr) {
+		            if (teardownErr) {
+		              console.error('Could not tear down Drop-in UI!');
+		            } else {
+		              console.info('Drop-in UI has been torn down!');
+		              // Remove the 'Submit payment' button
+		              $('#submit-button').remove();
+		            }
+		          });
+
+		          if (result.success) {
+		            $('#checkout-message').html('<h1>Success</h1><p>Your Drop-in UI is working! Check your <a href="https://sandbox.braintreegateway.com/login">sandbox Control Panel</a> for your test transactions.</p><p>Refresh to try another transaction.</p>');
+		          } else {
+		            console.log(result);
+		            $('#checkout-message').html('<h1>Error</h1><p>Check your console.</p>');
+		          }
+		        });
+		      });
+		    });
+		  });
+		</script>
+
+		
+
+		<!-- JQUERY STEP -->
+		<script src="js/jquery.steps.js"></script>
+
+		<!-- DATE-PICKER -->
+		<script src="vendor/date-picker/js/datepicker.js"></script>
+		<script src="vendor/date-picker/js/datepicker.en.js"></script>
+
+		<script src="js/main.js"></script>
+<!-- Template created and distributed by Colorlib -->
+</body>
+</html>
