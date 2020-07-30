@@ -18,9 +18,9 @@ const Stripe = require('stripe');
 const flash = require('connect-flash');
 const session = require('express-session');
 
-const stripe = Stripe('sk_test_EycwzlF2EyCNqN9vTSGieIag002Nx5vqpx');
+const stripe = Stripe(process.env.STRIP_SECRETKEY);
 
-mongoose.connect('mongodb://ahmed:0512922Ahmed1234@ds117362.mlab.com:17362/fax', {
+mongoose.connect(process.env.MONGO_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true
 }).then(() => {
@@ -88,7 +88,7 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
 	  amount: amount * 100,
 	  currency: "usd",
 	  source: "tok_amex", // obtained with Stripe.js
-	  description: "My First Test Charge (created for API docs)"
+	  description: "Someone has sent a pdf file"
 	}, function(err, charge) {
 	  // asynchronously called
 	  if(err) console.log(err)
@@ -101,7 +101,7 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
   	console.log(`To Person, ${toPerson}`);
 	phaxio.faxes.create({
 	  from: req.body.post.from,
-	  to: toPerson, // Replace this with a number that can receive faxes.
+	  to: `+${toPerson}`, // Replace this with a number that can receive faxes.
 	  // content_url: req.file.buffer,
 	  // file: fs.readFileSync(post.file.data),
 	  // header_page_nums: true,
@@ -133,7 +133,7 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
 	  secure: false,
 	  // requireTls: true,
 	  auth: {
-	    user: 'ahmedelselly87@gmail.com',
+	    user: 'faxmilesm@gmail.com',
 	    pass: process.env.NODEMAILER_PASSWORD
 	  },
 	  tls: {
@@ -142,7 +142,7 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
 	});
 
 	var mailOptions = {
-	  from: 'ahmedelselly87@gmail.com',
+	  from: '"Faxmiles" <ahmedelselly87@gmail.com>',
 	  to: req.body.post.email,
 	  subject: 'Fax',
 	  text: `Fax has been sent successfully! the amount you have paid is ${amount}.00$`
