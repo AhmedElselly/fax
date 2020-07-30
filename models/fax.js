@@ -11,7 +11,8 @@ const faxSchema = new Schema({
 	},
 	pages: Number,
 	amount: Number,
-	email: String
+	email: String,
+	country: String
 });
 
 module.exports = mongoose.model('Fax', faxSchema);

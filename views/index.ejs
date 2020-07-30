@@ -59,9 +59,9 @@
 <div class="tab">
   <div class="form-group col-md-6" style="margin-left: -15px">
       <label for="inputState" style="font-size: 1.8rem">Receiver location:</label>
-      <select id="inputState" class="form-control">
+      <select id="inputState" class="form-control" name="post[country]">
         <% countries.forEach(function(country){ %>
-          <option><%=country.name%></option>
+          <option value="<%=country.name%>"><%=country.name%></option>
         <% }) %>
         
       </select>

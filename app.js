@@ -68,6 +68,7 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
 	post.file.data = req.file.buffer;
 	post.file.contenType = req.file.mimetype;
 	post.file.name = req.file.originalname;
+	post.country = req.body.post.country;
 	post.pages = 0;
 	await pdfparse(post.file.data).then(data => {
 		post.pages += data.numpages;
