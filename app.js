@@ -49,7 +49,17 @@ app.use(function(req, res, next){
 })
 
 app.get('/', (req, res) => {
-	res.render('index');
+	// var countries;
+	phaxio.public.getCountries()
+	  .then(response => {
+	  	console.log(JSON.stringify(response, null, 2))
+	  	countries = response;
+	  	// return (response.data, null, 2)
+  	  	res.render('index', {countries: countries.data});
+
+	  })
+	  .catch((err) => { throw err; });
+
 });
 
 app.post('/fax', upload.single('filePDF'), async (req, res) => {
@@ -145,7 +155,8 @@ app.post('/fax', upload.single('filePDF'), async (req, res) => {
 	  }
 	});
 
-	req.session.success = `File has been sent successfully. The amount you have paid is ${amount}.00$ A message has been sent to your email.`
+	req.session.success = `File has been sent successfully. The amount you have paid is $${amount}.0 and an email is
+sent to you with the confirmation message..`
  	res.redirect('/');
 	  
 })
